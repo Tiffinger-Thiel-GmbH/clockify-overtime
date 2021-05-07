@@ -6,44 +6,70 @@
       check out the
       <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
     </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li>
-        <a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript" target="_blank" rel="noopener"
-          >typescript</a
-        >
-      </li>
-      <li>
-        <a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a>
-      </li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-item label="Clockify API key">
+        <a-input v-model:value="formState.apiKey" @change="onChangeApiKey" />
+      </a-form-item>
+      <a-form-item label="Workspace">
+        <a-select v-model:value="formState.workspace" placeholder="please select workspace">
+          <a-select-option v-for="ws in workspaces" :key="ws" :value="ws">{{ ws }}</a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item label="Start date">
+        <a-date-picker v-model:value="formState.startDate" show-time type="date" placeholder="Pick a date" style="width: 100%" />
+      </a-form-item>
+      <a-form-item label="End date">
+        <a-date-picker v-model:value="formState.endDate" show-time type="date" placeholder="Pick a date" style="width: 100%" />
+      </a-form-item>
+      <a-form-item label="Working hours per week">
+        <a-input v-model:value="formState.workingHours" />
+      </a-form-item>
+      <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
+        <a-button type="primary" @click="onSubmit">Create</a-button>
+      </a-form-item>
+    </a-form>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, reactive, toRaw, UnwrapRef } from 'vue';
+import moment, { Moment } from 'moment';
+
+interface FormState {
+  apiKey: string;
+  workspace?: string;
+  startDate?: Moment;
+  endDate?: Moment;
+  workingHours: number;
+}
 
 export default defineComponent({
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  setup() {
+    const formState: UnwrapRef<FormState> = reactive({
+      apiKey: '',
+      startDate: moment().startOf('year'),
+      endDate: moment(),
+      workingHours: 40
+    });
+    const workspaces: string[] = ['Test'];
+    const onChangeApiKey = () => {
+      console.log(formState.apiKey);
+    };
+    const onSubmit = () => {
+      console.log('submit!', toRaw(formState));
+    };
+    return {
+      labelCol: { span: 4 },
+      wrapperCol: { span: 14 },
+      formState,
+      workspaces,
+      onChangeApiKey,
+      onSubmit
+    };
   }
 });
 </script>
