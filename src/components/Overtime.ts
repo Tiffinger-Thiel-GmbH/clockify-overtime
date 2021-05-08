@@ -12,7 +12,7 @@ interface FormState {
   workspaces: ReadonlyArray<ClockifyWorkspace>;
   userAvatarUrl?: string;
   userId?: string;
-  overtime?: { businessHours: number; allocatedHours: number; overtimeHours: number; isOver?: boolean };
+  overtime?: { businessHours: number; allocatedHours: number; overtimeHours: number; isOver?: boolean; missingDates: string[] };
 }
 
 interface SavedState {
@@ -76,7 +76,8 @@ export default defineComponent({
           businessHours: moment.duration(result.businessSeconds * 1000).asHours(),
           allocatedHours: moment.duration(result.allocatedSeconds * 1000).asHours(),
           overtimeHours: moment.duration(result.overtimeSeconds * 1000).asHours(),
-          isOver: result.overtimeSeconds > 0
+          isOver: result.overtimeSeconds > 0,
+          missingDates: result.missingDates.map((date) => moment(date).format('LL'))
         };
       }
     };

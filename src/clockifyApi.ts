@@ -46,6 +46,7 @@ export interface SummaryReportResponse {
       duration: number;
       amount: number;
       name: string;
+      children: [{ name: string; duration: number }];
     }
   ];
 }
@@ -63,7 +64,7 @@ export async function getSummaryReport(
       dateRangeStart: startDate.toISOString(),
       dateRangeEnd: endDate.toISOString(),
       summaryFilter: {
-        groups: ['USER']
+        groups: ['USER', 'DATE']
       },
       users: {
         ids: [userId],
