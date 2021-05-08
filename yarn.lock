@@ -3994,12 +3994,14 @@ __metadata:
     axios: ^0.21.1
     babel-loader: ^8.2.2
     core-js: ^3.6.5
+    date-fns: ^2.21.3
     eslint: ^7.25.0
     eslint-plugin-import: ^2.20.2
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prettier: ^3.4.0
     eslint-plugin-promise: ^4.2.1
     eslint-plugin-vue: ^7.9.0
+    feiertagejs: ^1.3.0
     moment: ^2.29.1
     prettier: ^2.2.1
     regenerator-runtime: ^0.13.7
@@ -4682,6 +4684,13 @@ __metadata:
   dependencies:
     assert-plus: ^1.0.0
   checksum: 5959409ee42dc4bdbf3fa384b801ece580ca336658bb0342ffab0099b3fc6bf9b3e239e1b82dcc4fcaeee315353e08f2eae47b0928a6a579391598c44958afa1
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^2.21.3":
+  version: 2.21.3
+  resolution: "date-fns@npm:2.21.3"
+  checksum: a88c9da180cde3a3426c09cacf3f6bffb615e31d73e458da90e9d5304432eea2e0b360f40ee4fd5ca187659e8a7f8f667db902a3eb033e8d2d1522b1cc1b9e32
   languageName: node
   linkType: hard
 
@@ -5915,6 +5924,13 @@ __metadata:
   dependencies:
     websocket-driver: ">=0.5.1"
   checksum: 94c48a5b4e9ab6ff05a424dfeebe0da6c7963776172c8713588926f1e15348c423e440c601360d105602586d59f8daeed5dadb76e29070f0b468ebd55e1f868d
+  languageName: node
+  linkType: hard
+
+"feiertagejs@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "feiertagejs@npm:1.3.0"
+  checksum: 71553e68545402c43abcd017a95519e0de448a01ce76305c3e2e3400f8d43a6d3a1bb3fa3dcf38c331604962ee1b16978289a92ff815893c7e9e92e1a253fa8e
   languageName: node
   linkType: hard
 

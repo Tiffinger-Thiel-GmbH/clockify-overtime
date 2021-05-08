@@ -1,7 +1,8 @@
-import { defineComponent, reactive, ref, toRaw, UnwrapRef } from 'vue';
-import moment, { Moment } from 'moment';
-import { ClockifyWorkspace, getCurrentUser, getWorkspaces } from '../clockifyApi';
+import { requestAndCalculateOvertime } from '@/calculate';
 import { RuleObject } from 'ant-design-vue/lib/form/interface';
+import moment, { Moment } from 'moment';
+import { defineComponent, reactive, ref, toRaw, UnwrapRef } from 'vue';
+import { ClockifyWorkspace, getCurrentUser, getWorkspaces } from '../clockifyApi';
 
 interface FormState {
   apiKey: string;
@@ -10,6 +11,8 @@ interface FormState {
   workingHours: number;
   workspaces: ReadonlyArray<ClockifyWorkspace>;
   userAvatarUrl?: string;
+  userId?: string;
+  overtime?: { businessHours: number; allocatedHours: number; overtimeHours: number; isOver?: boolean };
 }
 
 interface SavedState {
@@ -33,6 +36,7 @@ export default defineComponent({
     const readWorkspaces = async (apiKey: string) => {
       const currentUser = await getCurrentUser(apiKey);
       const workspaces = await getWorkspaces(apiKey);
+      formState.userId = currentUser.id;
       formState.workspaces = workspaces;
       formState.workspace = currentUser.activeWorkspace;
       formState.userAvatarUrl = currentUser.profilePicture;
@@ -51,13 +55,30 @@ export default defineComponent({
       setTimeout(() => formRef.value.validateField('apiKey'), 100);
     }
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
       console.log('submit!', toRaw(formState));
       const valuesToSave: SavedState = {
         apiKey: formState.apiKey,
         workingHours: formState.workingHours
       };
       localStorage.setItem('overtimeFormState', JSON.stringify(valuesToSave));
+
+      if (formState.userId && formState.workspace && formState.period) {
+        const result = await requestAndCalculateOvertime(
+          formState.apiKey,
+          formState.userId,
+          formState.workspace,
+          formState.period[0].toDate(),
+          formState.period[1].toDate(),
+          formState.workingHours / 5
+        );
+        formState.overtime = {
+          businessHours: moment.duration(result.businessSeconds * 1000).asHours(),
+          allocatedHours: moment.duration(result.allocatedSeconds * 1000).asHours(),
+          overtimeHours: moment.duration(result.overtimeSeconds * 1000).asHours(),
+          isOver: result.overtimeSeconds > 0
+        };
+      }
     };
 
     const rules = {

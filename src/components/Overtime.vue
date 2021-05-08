@@ -10,13 +10,18 @@
         <img :src="formState.userAvatarUrl" alt="User Avatar" />
       </div>
     </div>
-    <p>
-      Enter your data below and click "Submit" to calculate overtime.<br />
-      Disclaimer: This app does not have a backend 😉. Your data is only sent to the Clockify API.
-    </p>
+    <a-row>
+      <a-col offset="4">
+        <p>
+          Enter your data below and click "Submit" to calculate overtime.<br />
+          Disclaimer: This app does not have a backend 😉. Your data is only sent to the Clockify API.
+        </p>
+      </a-col>
+    </a-row>
     <a-form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol" :rules="rules">
       <a-form-item required has-feedback label="Clockify API key" name="apiKey">
         <a-input v-model:value="formState.apiKey" />
+        <div class="ant-form-extra"><a href="https://clockify.me/user/settings">Get your API key here</a></div>
       </a-form-item>
       <a-form-item required label="Workspace">
         <a-select v-model:value="formState.workspace" placeholder="please select workspace">
@@ -33,6 +38,16 @@
         <a-button type="primary" @click="onSubmit">Submit</a-button>
       </a-form-item>
     </a-form>
+    <a-row v-if="formState.overtime">
+      <a-col offset="4">
+        Business hours (considering holidays): <b>{{ formState.overtime.businessHours }}</b
+        ><br />
+        Allocated hours: <b>{{ formState.overtime.allocatedHours }}</b
+        ><br />
+        {{ formState.overtime.isOver ? 'Overtime' : 'Missing time' }}: <b>{{ formState.overtime.overtimeHours }}</b>
+        {{ formState.overtime.isOver ? '😁' : '😨' }}
+      </a-col>
+    </a-row>
   </div>
 </template>
 
