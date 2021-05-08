@@ -9,8 +9,10 @@
   },
   "dependencies": {
     "ant-design-vue": "^2.1.2",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "moment": "^2.29.1",
+    "regenerator-runtime": "^0.13.7",
     "vue": "^3.0.0"
   },
   "devDependencies": {
