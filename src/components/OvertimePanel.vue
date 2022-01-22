@@ -21,7 +21,7 @@
     <a-form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol" :rules="rules">
       <a-form-item required has-feedback label="Clockify API key" name="apiKey">
         <a-input v-model:value="formState.apiKey" />
-        <div class="ant-form-extra"><a href="https://clockify.me/user/settings">Get your API key here</a></div>
+        <template v-slot:extra><a href="https://clockify.me/user/settings">Get your API key here</a></template>
       </a-form-item>
       <a-form-item required label="Workspace">
         <a-select v-model:value="formState.workspace" placeholder="please select workspace">
