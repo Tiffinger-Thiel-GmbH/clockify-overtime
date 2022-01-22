@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Overtime from './components/Overtime.vue';
+import Overtime from './components/OvertimePanel.vue';
 
 export default {
   name: 'App',

@@ -75,7 +75,7 @@
   </div>
 </template>
 
-<script src="./Overtime.ts" />
+<script src="./OvertimePanel.ts" />
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
