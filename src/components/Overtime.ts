@@ -1,8 +1,8 @@
 import { requestAndCalculateOvertime } from '@/calculate';
 import { RuleObject } from 'ant-design-vue/lib/form/interface';
 import moment, { Moment } from 'moment';
-import { defineComponent, reactive, ref, toRaw, UnwrapRef } from 'vue';
-import { ClockifyWorkspace, getCurrentUser, getWorkspaces } from '../clockifyApi';
+import { defineComponent, reactive, ref, toRaw, UnwrapRef, watch } from 'vue';
+import { AllUsersResponse, ClockifyWorkspace, getAllUsers, getCurrentUser, getWorkspaces } from '../clockifyApi';
 
 interface FormState {
   apiKey: string;
@@ -11,7 +11,10 @@ interface FormState {
   workingHours: number;
   workspaces: ReadonlyArray<ClockifyWorkspace>;
   userAvatarUrl?: string;
+  currentUserId?: string;
   userId?: string;
+  users: ReadonlyArray<AllUsersResponse>;
+  isAdmin?: boolean;
   overtime?: { businessHours: number; allocatedHours: number; overtimeHours: number; isOver?: boolean; missingDates: string[] };
 }
 
@@ -31,20 +34,40 @@ export default defineComponent({
       apiKey: savedValues?.apiKey || '',
       period: [moment().startOf('year'), moment()],
       workingHours: savedValues?.workingHours || 40,
-      workspaces: []
+      workspaces: [],
+      users: []
     });
     const readWorkspaces = async (apiKey: string) => {
       const currentUser = await getCurrentUser(apiKey);
       const workspaces = await getWorkspaces(apiKey);
+      formState.currentUserId = currentUser.id;
       formState.userId = currentUser.id;
       formState.workspaces = workspaces;
       formState.workspace = currentUser.activeWorkspace;
       formState.userAvatarUrl = currentUser.profilePicture;
     };
+    const readUsers = async (workspaceId: string) => {
+      const users = await getAllUsers(formState.apiKey, workspaceId);
+      formState.users = users;
+      formState.isAdmin = users.find((user) => user.id === formState.currentUserId)?.roles.some((role) => role.role === 'WORKSPACE_ADMIN');
+    };
+    watch(
+      () => formState.workspace,
+      async (worspaceId) => {
+        if (worspaceId && formState.currentUserId && formState.apiKey) {
+          formState.userId = formState.currentUserId;
+          try {
+            await readUsers(worspaceId);
+          } catch (err) {
+            console.error(err.message);
+          }
+        }
+      }
+    );
     const validateApiKey = async (rule: RuleObject, value: string) => {
       if (value) {
         try {
-          readWorkspaces(value);
+          await readWorkspaces(value);
         } catch (err) {
           throw new Error(err.message);
         }
@@ -72,13 +95,17 @@ export default defineComponent({
           formState.period[1].toDate(),
           formState.workingHours / 5
         );
-        formState.overtime = {
-          businessHours: moment.duration(result.businessSeconds * 1000).asHours(),
-          allocatedHours: moment.duration(result.allocatedSeconds * 1000).asHours(),
-          overtimeHours: moment.duration(result.overtimeSeconds * 1000).asHours(),
-          isOver: result.overtimeSeconds > 0,
-          missingDates: result.missingDates.map((date) => moment(date).format('LL'))
-        };
+        if (result) {
+          formState.overtime = {
+            businessHours: moment.duration(result.businessSeconds * 1000).asHours(),
+            allocatedHours: moment.duration(result.allocatedSeconds * 1000).asHours(),
+            overtimeHours: moment.duration(result.overtimeSeconds * 1000).asHours(),
+            isOver: result.overtimeSeconds > 0,
+            missingDates: result.missingDates.map((date) => moment(date).format('LL'))
+          };
+        } else {
+          formState.overtime = undefined;
+        }
       }
     };
 

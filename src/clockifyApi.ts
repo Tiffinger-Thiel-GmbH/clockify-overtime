@@ -20,6 +20,26 @@ export async function getCurrentUser(apiKey: string): Promise<CurrentUserRespons
   return response.data;
 }
 
+export interface AllUsersResponse {
+  id: string;
+  email: string;
+  name: string;
+  profilePicture: string;
+  status: 'PENDING' | 'ACTIVE' | 'DECLINED' | 'INACTIVE';
+  roles: { role: string }[];
+}
+
+export async function getAllUsers(apiKey: string, workspaceId: string): Promise<AllUsersResponse[]> {
+  const response = await clockify.get<AllUsersResponse[]>(
+    `/workspaces/${workspaceId}/users?status=ACTIVE&memberships=NONE&includeRoles=true`,
+    {
+      baseURL: BASE_URL,
+      headers: { 'X-Api-Key': apiKey }
+    }
+  );
+  return response.data;
+}
+
 export interface ClockifyWorkspace {
   id: string;
   name: string;

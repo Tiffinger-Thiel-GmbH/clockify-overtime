@@ -16,9 +16,12 @@ export async function requestAndCalculateOvertime(
   startDate: Date,
   endDate: Date,
   hoursPerDay: number
-): Promise<OvertimeResult> {
+): Promise<OvertimeResult | undefined> {
   const report = await getSummaryReport(apiKey, userId, workspaceId, startOfDay(startDate), endOfDay(endDate));
   console.log(report);
+  if (!report.groupOne.length) {
+    return;
+  }
   return calculateOvertime(report, startDate, endDate, hoursPerDay);
 }
 

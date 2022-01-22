@@ -28,6 +28,21 @@
           <a-select-option v-for="ws in formState.workspaces" :key="ws.id" :value="ws.id">{{ ws.name }}</a-select-option>
         </a-select>
       </a-form-item>
+      <a-form-item required label="User" v-if="formState.isAdmin">
+        <a-select v-model:value="formState.userId" placeholder="please select user">
+          <a-select-option v-for="user in formState.users" :key="user.id" :value="user.id"
+            ><span
+              ><img
+                :src="user.profilePicture"
+                height="20"
+                width="20"
+                style="vertical-align: middle; margin-right: 0.33em; border-radius: 50%"
+              />
+              {{ user.name }}</span
+            ></a-select-option
+          >
+        </a-select>
+      </a-form-item>
       <a-form-item required label="Period">
         <a-range-picker :ranges="ranges" v-model:value="formState.period" style="width: 100%" />
       </a-form-item>
@@ -41,11 +56,9 @@
     <a-row v-if="formState.overtime">
       <a-col offset="4"
         ><p>
-          Business hours (considering holidays): <b>{{ formState.overtime.businessHours }}</b
-          ><br />
-          Allocated hours: <b>{{ formState.overtime.allocatedHours }}</b
-          ><br />
-          {{ formState.overtime.isOver ? 'Overtime' : 'Missing time' }}: <b>{{ formState.overtime.overtimeHours }}</b>
+          Business hours (considering holidays): <b>{{ formState.overtime.businessHours }} h</b><br />
+          Allocated hours: <b>{{ formState.overtime.allocatedHours.toFixed(2) }} h</b><br />
+          {{ formState.overtime.isOver ? 'Overtime' : 'Missing time' }}: <b>{{ formState.overtime.overtimeHours.toFixed(2) }} h</b>
           {{ formState.overtime.isOver ? '😁' : '😨' }}
         </p>
         <div v-if="formState.overtime.missingDates.length">
