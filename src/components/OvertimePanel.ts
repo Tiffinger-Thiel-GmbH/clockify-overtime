@@ -24,7 +24,7 @@ interface SavedState {
 }
 
 export default defineComponent({
-  name: 'Overtime',
+  name: 'OvertimePanel',
   setup() {
     const savedValuesJSON = localStorage.getItem('overtimeFormState');
     const savedValues = savedValuesJSON ? (JSON.parse(savedValuesJSON) as SavedState) : undefined;
@@ -75,7 +75,7 @@ export default defineComponent({
     };
     if (formState.apiKey) {
       //TODO how to do this properly?
-      setTimeout(() => formRef.value.validateField('apiKey'), 100);
+      setTimeout(() => formRef.value.validateFields('apiKey'), 100);
     }
 
     const onSubmit = async () => {
